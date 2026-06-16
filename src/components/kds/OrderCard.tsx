@@ -19,7 +19,7 @@ function getTimerColor(createdAt: string): string {
 }
 
 function getBorderColor(order: KitchenOrder): string {
-  if (order.Status === 'Ready') return 'border-emerald-900 opacity-60'
+  if (order.Status === 'Ready') return 'border-emerald-900'
   const minutes = getElapsedMinutes(order.CreatedAt)
   if (minutes >= 15) return 'border-red-900'
   return 'border-zinc-800'
@@ -103,8 +103,8 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
           </button>
         )}
         {order.Status === 'Ready' && (
-          <span className="text-xs px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-500">
-            Aguardando retirada
+          <span className="text-xs px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-900">
+            Pronto para servir
           </span>
         )}
       </div>
