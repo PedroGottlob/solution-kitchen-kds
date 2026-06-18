@@ -50,13 +50,19 @@ export function useKitchenOrders() {
   }, [])
 
   const updateStatus = async (orderId: string, status: KitchenOrder['Status']) => {
-    await kitchenService.updateStatus(orderId, { status })
+    // Optimistic update — atualiza localmente imediatamente
+    setOrders(prev =>
+      prev.map(o => o.OrderId === orderId ? { ...o, Status: status } : o)
+    )
+
+    try {
+      await kitchenService.updateStatus(orderId, { status })
+    } catch (e) {
+      console.error(e)
+      // SignalR vai trazer o estado real em caso de erro
+    }
 
     if (status === 'Ready') {
-      setOrders(prev =>
-        prev.map(o => o.OrderId === orderId ? { ...o, Status: 'Ready' } : o)
-      )
-
       setTimeout(() => {
         setOrders(prev => prev.filter(o => o.OrderId !== orderId))
       }, 8000)
