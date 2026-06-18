@@ -1,6 +1,25 @@
 import { useEffect, useState } from 'react'
 import type { KitchenOrder } from '../types/kitchen'
 import { kitchenService } from '../services/kitchenService'
+import { kitchenSignalRService } from '../services/kitchenSignalRService'
+
+function mapOrder(raw: any): KitchenOrder {
+  return {
+    OrderId: raw.OrderId ?? raw.orderId,
+    TenantId: raw.TenantId ?? raw.tenantId,
+    TableId: raw.TableId ?? raw.tableId,
+    Source: raw.Source ?? raw.source,
+    Status: raw.Status ?? raw.status,
+    Items: (raw.Items ?? raw.items ?? []).map((i: any) => ({
+      ItemId: i.ItemId ?? i.itemId,
+      Name: i.Name ?? i.name,
+      Quantity: i.Quantity ?? i.quantity,
+      Notes: i.Notes ?? i.notes,
+    })),
+    CreatedAt: raw.CreatedAt ?? raw.createdAt,
+    UpdatedAt: raw.UpdatedAt ?? raw.updatedAt,
+  }
+}
 
 export function useKitchenOrders() {
   const [orders, setOrders] = useState<KitchenOrder[]>([])
@@ -8,34 +27,25 @@ export function useKitchenOrders() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const source = kitchenService.streamOrders(
-      (data) => {
+    const unsubscribe = kitchenSignalRService.onKitchenOrdersUpdated((data: string) => {
+      try {
+        const incoming = JSON.parse(data).map(mapOrder) as KitchenOrder[]
         setOrders(prev => {
-          // Mantém pedidos com status Ready que ainda não sumiram
-          const readyIds = prev
-            .filter(o => o.Status === 'Ready')
-            .map(o => o.OrderId)
-
-          const incomingIds = data.map(o => o.OrderId)
-
-          // Pedidos Ready que não voltaram no stream (já foram removidos no backend)
+          const incomingIds = incoming.map(o => o.OrderId)
           const keepReady = prev.filter(
             o => o.Status === 'Ready' && !incomingIds.includes(o.OrderId)
           )
-
-          return [...data, ...keepReady]
+          return [...incoming, ...keepReady]
         })
         setConnected(true)
         setError(null)
-      },
-      () => {
-        setConnected(false)
-        setError('Conexão perdida com o servidor. Reconectando...')
+      } catch (e) {
+        console.error('Erro ao parsear mensagem SignalR:', e)
       }
-    )
+    })
 
     return () => {
-      source.close()
+      unsubscribe()
     }
   }, [])
 
@@ -43,12 +53,10 @@ export function useKitchenOrders() {
     await kitchenService.updateStatus(orderId, { status })
 
     if (status === 'Ready') {
-      // Atualiza localmente para mostrar "Aguardando retirada"
       setOrders(prev =>
         prev.map(o => o.OrderId === orderId ? { ...o, Status: 'Ready' } : o)
       )
 
-      // Remove da tela após 8 segundos
       setTimeout(() => {
         setOrders(prev => prev.filter(o => o.OrderId !== orderId))
       }, 8000)
