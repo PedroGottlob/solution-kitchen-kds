@@ -2,9 +2,12 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useKitchenOrders } from './hooks/useKitchenOrders'
 import { OrderCard } from './components/kds/OrderCard'
 import { KdsHeader } from './components/kds/KdsHeader'
+import { kitchenSignalRService } from './services/kitchenSignalRService'
+
+const NAMESPACE = 'https://solution-kitchen.com'
 
 function App() {
-  const { isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0()
   const { orders, connected, error, updateStatus } = useKitchenOrders()
 
   const pending = orders.filter(o => o.Status === 'Pending').length
@@ -35,6 +38,23 @@ function App() {
       </div>
     )
   }
+
+  const roles: string[] = user?.[`${NAMESPACE}/roles`] ?? []
+  const tenantId: string = user?.[`${NAMESPACE}/tenant_id`] ?? '00000000-0000-0000-0000-000000000001'
+
+  if (!roles.includes('chef') && !roles.includes('gerente')) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-8">
+        <div className="text-center">
+          <p className="text-white text-lg font-medium mb-2">Acesso negado</p>
+          <p className="text-zinc-500 text-sm">Você não tem permissão para acessar o KDS.</p>
+        </div>
+      </div>
+    )
+  }
+
+  kitchenSignalRService.setTenantId(tenantId)
+  kitchenSignalRService.connect().catch(console.error)
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">
