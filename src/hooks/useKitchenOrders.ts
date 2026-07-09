@@ -30,13 +30,7 @@ export function useKitchenOrders() {
     const unsubscribe = kitchenSignalRService.onKitchenOrdersUpdated((data: string) => {
       try {
         const incoming = JSON.parse(data).map(mapOrder) as KitchenOrder[]
-        setOrders(prev => {
-          const incomingIds = incoming.map(o => o.OrderId)
-          const keepReady = prev.filter(
-            o => o.Status === 'Ready' && !incomingIds.includes(o.OrderId)
-          )
-          return [...incoming, ...keepReady]
-        })
+        setOrders(incoming)
         setConnected(true)
         setError(null)
       } catch (e) {
@@ -50,7 +44,6 @@ export function useKitchenOrders() {
   }, [])
 
   const updateStatus = async (orderId: string, status: KitchenOrder['Status']) => {
-    // Optimistic update — atualiza localmente imediatamente
     setOrders(prev =>
       prev.map(o => o.OrderId === orderId ? { ...o, Status: status } : o)
     )
@@ -59,13 +52,6 @@ export function useKitchenOrders() {
       await kitchenService.updateStatus(orderId, { status })
     } catch (e) {
       console.error(e)
-      // SignalR vai trazer o estado real em caso de erro
-    }
-
-    if (status === 'Ready') {
-      setTimeout(() => {
-        setOrders(prev => prev.filter(o => o.OrderId !== orderId))
-      }, 8000)
     }
   }
 

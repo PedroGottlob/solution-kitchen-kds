@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useKitchenOrders } from './hooks/useKitchenOrders'
 import { OrderCard } from './components/kds/OrderCard'
@@ -5,6 +6,7 @@ import { KdsHeader } from './components/kds/KdsHeader'
 import { kitchenSignalRService } from './services/kitchenSignalRService'
 
 const NAMESPACE = 'https://solution-kitchen.com'
+const DEV_FALLBACK_TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
 function App() {
   const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0()
@@ -13,6 +15,19 @@ function App() {
   const pending = orders.filter(o => o.Status === 'Pending').length
   const preparing = orders.filter(o => o.Status === 'Preparing').length
   const ready = orders.filter(o => o.Status === 'Ready').length
+
+  const roles: string[] = user?.[`${NAMESPACE}/roles`] ?? []
+  const rawTenantId: string | undefined = user?.[`${NAMESPACE}/tenant_id`]
+  const tenantId: string | undefined = rawTenantId ?? (import.meta.env.DEV ? DEV_FALLBACK_TENANT_ID : undefined)
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    if (!roles.includes('chef') && !roles.includes('gerente')) return
+    if (!tenantId) return
+
+    kitchenSignalRService.setTenantId(tenantId)
+    kitchenSignalRService.connect().catch(console.error)
+  }, [isAuthenticated, tenantId])
 
   if (isLoading) {
     return (
@@ -39,9 +54,6 @@ function App() {
     )
   }
 
-  const roles: string[] = user?.[`${NAMESPACE}/roles`] ?? []
-  const tenantId: string = user?.[`${NAMESPACE}/tenant_id`] ?? '00000000-0000-0000-0000-000000000001'
-
   if (!roles.includes('chef') && !roles.includes('gerente')) {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-8">
@@ -53,8 +65,16 @@ function App() {
     )
   }
 
-  kitchenSignalRService.setTenantId(tenantId)
-  kitchenSignalRService.connect().catch(console.error)
+  if (!tenantId) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-8">
+        <div className="text-center">
+          <p className="text-white text-lg font-medium mb-2">Conta sem restaurante vinculado</p>
+          <p className="text-zinc-500 text-sm">Sua conta não está associada a nenhum restaurante. Entre em contato com o suporte.</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col">

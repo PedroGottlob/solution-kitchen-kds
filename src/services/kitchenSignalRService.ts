@@ -6,34 +6,44 @@ class KitchenSignalRService {
   private connection: signalR.HubConnection | null = null
   private listeners: Map<string, Set<(data: string) => void>> = new Map()
   private tenantId: string = '00000000-0000-0000-0000-000000000001'
+  private connecting: boolean = false
 
   setTenantId(tenantId: string) {
     this.tenantId = tenantId
   }
 
   async connect() {
+    if (this.connecting) return
     if (this.connection?.state === signalR.HubConnectionState.Connected) return
+    if (this.connection?.state === signalR.HubConnectionState.Connecting) return
+    if (this.connection?.state === signalR.HubConnectionState.Reconnecting) return
 
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${BASE_URL}/hubs/kitchen`, {
-        headers: { 'X-Tenant-Id': this.tenantId }
+    this.connecting = true
+
+    try {
+      this.connection = new signalR.HubConnectionBuilder()
+        .withUrl(`${BASE_URL}/hubs/kitchen`, {
+          headers: { 'X-Tenant-Id': this.tenantId }
+        })
+        .withAutomaticReconnect([0, 2000, 5000, 10000])
+        .configureLogging(signalR.LogLevel.Warning)
+        .build()
+
+      this.connection.on('KitchenOrdersUpdated', (data: string) => {
+        this.listeners.get('KitchenOrdersUpdated')?.forEach(cb => cb(data))
       })
-      .withAutomaticReconnect([0, 2000, 5000, 10000])
-      .configureLogging(signalR.LogLevel.Warning)
-      .build()
 
-    this.connection.on('KitchenOrdersUpdated', (data: string) => {
-      this.listeners.get('KitchenOrdersUpdated')?.forEach(cb => cb(data))
-    })
+      this.connection.onreconnected(async () => {
+        await this.connection!.invoke('JoinTenant', this.tenantId)
+        await this.fetchAndNotify()
+      })
 
-    this.connection.onreconnected(async () => {
-      await this.connection!.invoke('JoinTenant', this.tenantId)
+      await this.connection.start()
+      await this.connection.invoke('JoinTenant', this.tenantId)
       await this.fetchAndNotify()
-    })
-
-    await this.connection.start()
-    await this.connection.invoke('JoinTenant', this.tenantId)
-    await this.fetchAndNotify()
+    } finally {
+      this.connecting = false
+    }
   }
 
   private async fetchAndNotify() {
