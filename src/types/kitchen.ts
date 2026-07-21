@@ -1,8 +1,14 @@
+export interface SelectedOption {
+  name: string
+  additionalCost: number
+}
+
 export interface KitchenOrderItem {
   ItemId: string
   Name: string
   Quantity: number
   Notes?: string
+  SelectedOptions?: SelectedOption[]
 }
 
 export interface KitchenOrder {

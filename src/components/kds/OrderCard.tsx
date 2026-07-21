@@ -69,7 +69,22 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
               </span>
             </div>
             {item.Notes && (
-              <div className="text-xs text-zinc-500 ml-6 mt-0.5">{item.Notes}</div>
+              <p className="text-xs text-zinc-500 ml-6 mt-0.5">{item.Notes}</p>
+            )}
+            {item.SelectedOptions && item.SelectedOptions.length > 0 && (
+              <div className="ml-6 mt-1 flex flex-wrap gap-1">
+                {item.SelectedOptions.map((opt, j) => (
+                  <span
+                    key={j}
+                    className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700"
+                  >
+                    {opt.name}
+                    {opt.additionalCost > 0 && (
+                      <span className="text-violet-400 ml-1">+R${opt.additionalCost.toFixed(0)}</span>
+                    )}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
         ))}
@@ -85,7 +100,6 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
             />
           ))}
         </div>
-
         {order.Status === 'Pending' && (
           <button
             onClick={() => onUpdateStatus(order.OrderId, 'Preparing')}

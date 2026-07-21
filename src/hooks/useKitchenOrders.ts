@@ -15,6 +15,10 @@ function mapOrder(raw: any): KitchenOrder {
       Name: i.Name ?? i.name,
       Quantity: i.Quantity ?? i.quantity,
       Notes: i.Notes ?? i.notes,
+      SelectedOptions: (i.SelectedOptions ?? i.selectedOptions ?? []).map((o: any) => ({
+        name: o.Name ?? o.name,
+        additionalCost: o.AdditionalCost ?? o.additionalCost ?? 0,
+      })),
     })),
     CreatedAt: raw.CreatedAt ?? raw.createdAt,
     UpdatedAt: raw.UpdatedAt ?? raw.updatedAt,
@@ -47,7 +51,6 @@ export function useKitchenOrders() {
     setOrders(prev =>
       prev.map(o => o.OrderId === orderId ? { ...o, Status: status } : o)
     )
-
     try {
       await kitchenService.updateStatus(orderId, { status })
     } catch (e) {
