@@ -15,6 +15,7 @@ export interface KitchenOrder {
   OrderId: string
   TenantId: string
   TableId?: string
+  TableNumber?: number
   Source: string
   Status: 'Pending' | 'Preparing' | 'Ready' | 'Delivered'
   Items: KitchenOrderItem[]

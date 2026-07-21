@@ -8,6 +8,7 @@ function mapOrder(raw: any): KitchenOrder {
     OrderId: raw.OrderId ?? raw.orderId,
     TenantId: raw.TenantId ?? raw.tenantId,
     TableId: raw.TableId ?? raw.tableId,
+    TableNumber: raw.TableNumber ?? raw.tableNumber,
     Source: raw.Source ?? raw.source,
     Status: raw.Status ?? raw.status,
     Items: (raw.Items ?? raw.items ?? []).map((i: any) => ({

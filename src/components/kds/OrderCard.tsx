@@ -47,7 +47,7 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
       <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
         <div>
           <span className="text-white font-medium text-base">
-            Mesa {order.TableId?.slice(-4).toUpperCase() ?? '—'}
+            Mesa {order.TableNumber ?? order.TableId?.slice(-4).toUpperCase() ?? '—'}
           </span>
           <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
             {getSourceLabel(order.Source)}
