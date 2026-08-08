@@ -31,7 +31,7 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
         <div className="text-zinc-500 text-sm">Carregando...</div>
       </div>
     )
@@ -39,9 +39,9 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-6 px-8">
+      <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center gap-6 px-8">
         <div className="text-center">
-          <h1 className="text-white text-2xl font-medium mb-2">Solution Kitchen</h1>
+          <h1 className="text-zinc-900 text-2xl font-medium mb-2">Solution Kitchen</h1>
           <p className="text-zinc-500 text-sm">KDS · Cozinha</p>
         </div>
         <button
@@ -56,9 +56,9 @@ function App() {
 
   if (!roles.includes('chef') && !roles.includes('gerente')) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-8">
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center px-8">
         <div className="text-center">
-          <p className="text-white text-lg font-medium mb-2">Acesso negado</p>
+          <p className="text-zinc-900 text-lg font-medium mb-2">Acesso negado</p>
           <p className="text-zinc-500 text-sm">Você não tem permissão para acessar o KDS.</p>
         </div>
       </div>
@@ -67,9 +67,9 @@ function App() {
 
   if (!tenantId) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-8">
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center px-8">
         <div className="text-center">
-          <p className="text-white text-lg font-medium mb-2">Conta sem restaurante vinculado</p>
+          <p className="text-zinc-900 text-lg font-medium mb-2">Conta sem restaurante vinculado</p>
           <p className="text-zinc-500 text-sm">Sua conta não está associada a nenhum restaurante. Entre em contato com o suporte.</p>
         </div>
       </div>
@@ -77,7 +77,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col">
+    <div className="min-h-screen bg-zinc-50 flex flex-col">
       <KdsHeader
         pending={pending}
         preparing={preparing}
@@ -93,9 +93,9 @@ function App() {
 
       {orders.length === 0 ? (
         <div className="flex-1 flex items-center justify-center flex-col gap-3">
-          <div className="text-zinc-600 text-5xl">🍳</div>
+          <div className="text-zinc-500 text-5xl">🍳</div>
           <div className="text-zinc-500 text-lg">Nenhum pedido na fila</div>
-          <div className="text-zinc-600 text-sm">Os pedidos aparecerão aqui em tempo real</div>
+          <div className="text-zinc-500 text-sm">Os pedidos aparecerão aqui em tempo real</div>
         </div>
       ) : (
         <div className="flex-1 p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-min">
@@ -109,13 +109,13 @@ function App() {
         </div>
       )}
 
-      <div className="bg-zinc-900 border-t border-zinc-800 px-6 py-2 flex items-center justify-between">
+      <div className="bg-zinc-100 border-t border-zinc-200 px-6 py-2 flex items-center justify-between">
         <span className="text-zinc-500 text-xs">
           {orders.length} pedido{orders.length !== 1 ? 's' : ''} na tela
         </span>
         <button
           onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-          className="text-zinc-600 text-xs hover:text-zinc-400 transition-colors cursor-pointer"
+          className="text-zinc-500 text-xs hover:text-zinc-600 transition-colors cursor-pointer"
         >
           Sair
         </button>

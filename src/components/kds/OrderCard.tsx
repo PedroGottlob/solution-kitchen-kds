@@ -22,7 +22,7 @@ function getBorderColor(order: KitchenOrder): string {
   if (order.Status === 'Ready') return 'border-emerald-900'
   const minutes = getElapsedMinutes(order.CreatedAt)
   if (minutes >= 15) return 'border-red-900'
-  return 'border-zinc-800'
+  return 'border-zinc-200'
 }
 
 function getSourceLabel(source: string): string {
@@ -41,15 +41,15 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
   const items = order.Items ?? []
 
   return (
-    <div className={`bg-zinc-900 rounded-xl border ${borderColor} overflow-hidden`}>
+    <div className={`bg-zinc-100 rounded-xl border ${borderColor} overflow-hidden`}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200">
         <div>
-          <span className="text-white font-medium text-base">
+          <span className="text-zinc-900 font-medium text-base">
             Mesa {order.TableNumber ?? order.TableId?.slice(-4).toUpperCase() ?? '—'}
           </span>
-          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+          <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600">
             {getSourceLabel(order.Source)}
           </span>
         </div>
@@ -63,8 +63,8 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
         {items.map((item, i) => (
           <div key={i}>
             <div className="flex items-center gap-2">
-              <span className={`text-sm font-medium ${order.Status === 'Ready' ? 'line-through text-zinc-500' : 'text-zinc-100'}`}>
-                <span className="text-accent-400">{item.Quantity}× </span>
+              <span className={`text-sm font-medium ${order.Status === 'Ready' ? 'line-through text-zinc-500' : 'text-zinc-900'}`}>
+                <span className="text-accent-600">{item.Quantity}× </span>
                 {item.Name}
               </span>
             </div>
@@ -76,11 +76,11 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
                 {item.SelectedOptions.map((opt, j) => (
                   <span
                     key={j}
-                    className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700"
+                    className="text-xs px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-600 border border-zinc-300"
                   >
                     {opt.name}
                     {opt.additionalCost > 0 && (
-                      <span className="text-accent-400 ml-1">+R${opt.additionalCost.toFixed(0)}</span>
+                      <span className="text-accent-600 ml-1">+R${opt.additionalCost.toFixed(0)}</span>
                     )}
                   </span>
                 ))}
@@ -91,12 +91,12 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-zinc-800">
+      <div className="flex items-center justify-between px-4 py-3 border-t border-zinc-200">
         <div className="flex gap-1">
           {items.map((_, i) => (
             <div
               key={i}
-              className={`w-2 h-2 rounded-full ${order.Status !== 'Pending' ? 'bg-emerald-500' : 'bg-zinc-700'}`}
+              className={`w-2 h-2 rounded-full ${order.Status !== 'Pending' ? 'bg-emerald-500' : 'bg-zinc-300'}`}
             />
           ))}
         </div>
