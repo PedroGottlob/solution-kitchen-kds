@@ -86,7 +86,7 @@ function App() {
       />
 
       {error && (
-        <div className="bg-red-950 border-b border-red-900 px-6 py-2 text-red-400 text-sm">
+        <div className="bg-red-50 border-b border-red-200 px-6 py-2 text-red-700 text-sm">
           {error}
         </div>
       )}

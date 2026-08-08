@@ -13,15 +13,15 @@ function getElapsedMinutes(createdAt: string): number {
 
 function getTimerColor(createdAt: string): string {
   const minutes = getElapsedMinutes(createdAt)
-  if (minutes >= 15) return 'text-red-400 bg-red-950'
-  if (minutes >= 8) return 'text-amber-400 bg-amber-950'
-  return 'text-emerald-400 bg-emerald-950'
+  if (minutes >= 15) return 'text-red-700 bg-red-50'
+  if (minutes >= 8) return 'text-amber-700 bg-amber-50'
+  return 'text-emerald-700 bg-emerald-50'
 }
 
 function getBorderColor(order: KitchenOrder): string {
-  if (order.Status === 'Ready') return 'border-emerald-900'
+  if (order.Status === 'Ready') return 'border-emerald-500'
   const minutes = getElapsedMinutes(order.CreatedAt)
-  if (minutes >= 15) return 'border-red-900'
+  if (minutes >= 15) return 'border-red-500'
   return 'border-accent-200'
 }
 
@@ -103,7 +103,7 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
         {order.Status === 'Pending' && (
           <button
             onClick={() => onUpdateStatus(order.OrderId, 'Preparing')}
-            className="text-xs px-3 py-1.5 rounded-lg bg-accent-950 text-accent-400 border border-accent-900 hover:bg-accent-900 transition-colors cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg bg-accent-50 text-accent-700 border border-accent-200 hover:bg-accent-100 transition-colors cursor-pointer"
           >
             Iniciar preparo
           </button>
@@ -111,13 +111,13 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
         {order.Status === 'Preparing' && (
           <button
             onClick={() => onUpdateStatus(order.OrderId, 'Ready')}
-            className="text-xs px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-900 hover:bg-emerald-900 transition-colors cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer"
           >
             Marcar pronto
           </button>
         )}
         {order.Status === 'Ready' && (
-          <span className="text-xs px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-900">
+          <span className="text-xs px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
             Pronto para servir
           </span>
         )}
