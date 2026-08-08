@@ -22,7 +22,7 @@ function getBorderColor(order: KitchenOrder): string {
   if (order.Status === 'Ready') return 'border-emerald-900'
   const minutes = getElapsedMinutes(order.CreatedAt)
   if (minutes >= 15) return 'border-red-900'
-  return 'border-zinc-200'
+  return 'border-accent-200'
 }
 
 function getSourceLabel(source: string): string {
@@ -41,10 +41,10 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
   const items = order.Items ?? []
 
   return (
-    <div className={`bg-zinc-100 rounded-xl border ${borderColor} overflow-hidden`}>
+    <div className={`bg-accent-50 rounded-xl border ${borderColor} overflow-hidden`}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-accent-200">
         <div>
           <span className="text-zinc-900 font-medium text-base">
             Mesa {order.TableNumber ?? order.TableId?.slice(-4).toUpperCase() ?? '—'}
@@ -91,7 +91,7 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-zinc-200">
+      <div className="flex items-center justify-between px-4 py-3 border-t border-accent-200">
         <div className="flex gap-1">
           {items.map((_, i) => (
             <div

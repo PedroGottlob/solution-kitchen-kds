@@ -109,7 +109,7 @@ function App() {
         </div>
       )}
 
-      <div className="bg-zinc-100 border-t border-zinc-200 px-6 py-2 flex items-center justify-between">
+      <div className="bg-accent-50 border-t border-accent-200 px-6 py-2 flex items-center justify-between">
         <span className="text-zinc-500 text-xs">
           {orders.length} pedido{orders.length !== 1 ? 's' : ''} na tela
         </span>

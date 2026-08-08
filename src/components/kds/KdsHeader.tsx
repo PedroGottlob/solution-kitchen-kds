@@ -7,7 +7,7 @@ interface KdsHeaderProps {
 
 export function KdsHeader({ pending, preparing, ready, connected }: KdsHeaderProps) {
   return (
-    <div className="bg-zinc-100 border-b border-zinc-200 px-6 py-4 flex items-center justify-between">
+    <div className="bg-accent-50 border-b border-accent-200 px-6 py-4 flex items-center justify-between">
       
       {/* Title */}
       <div className="flex items-center gap-3">
