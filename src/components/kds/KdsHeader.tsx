@@ -25,7 +25,7 @@ export function KdsHeader({ pending, preparing, ready, connected }: KdsHeaderPro
           <div className="text-zinc-500 text-xs">Na fila</div>
         </div>
         <div className="text-center">
-          <div className="text-violet-400 text-xl font-medium">{preparing}</div>
+          <div className="text-accent-400 text-xl font-medium">{preparing}</div>
           <div className="text-zinc-500 text-xs">Em preparo</div>
         </div>
         <div className="text-center">

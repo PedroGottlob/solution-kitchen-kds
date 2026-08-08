@@ -64,7 +64,7 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
           <div key={i}>
             <div className="flex items-center gap-2">
               <span className={`text-sm font-medium ${order.Status === 'Ready' ? 'line-through text-zinc-500' : 'text-zinc-100'}`}>
-                <span className="text-violet-400">{item.Quantity}× </span>
+                <span className="text-accent-400">{item.Quantity}× </span>
                 {item.Name}
               </span>
             </div>
@@ -80,7 +80,7 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
                   >
                     {opt.name}
                     {opt.additionalCost > 0 && (
-                      <span className="text-violet-400 ml-1">+R${opt.additionalCost.toFixed(0)}</span>
+                      <span className="text-accent-400 ml-1">+R${opt.additionalCost.toFixed(0)}</span>
                     )}
                   </span>
                 ))}
@@ -103,7 +103,7 @@ export function OrderCard({ order, onUpdateStatus }: OrderCardProps) {
         {order.Status === 'Pending' && (
           <button
             onClick={() => onUpdateStatus(order.OrderId, 'Preparing')}
-            className="text-xs px-3 py-1.5 rounded-lg bg-violet-950 text-violet-400 border border-violet-900 hover:bg-violet-900 transition-colors cursor-pointer"
+            className="text-xs px-3 py-1.5 rounded-lg bg-accent-950 text-accent-400 border border-accent-900 hover:bg-accent-900 transition-colors cursor-pointer"
           >
             Iniciar preparo
           </button>
