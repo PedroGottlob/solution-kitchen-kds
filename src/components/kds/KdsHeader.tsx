@@ -11,6 +11,7 @@ export function KdsHeader({ pending, preparing, ready, connected }: KdsHeaderPro
       
       {/* Title */}
       <div className="flex items-center gap-3">
+        <img src="/logo-icon.svg" alt="" className="w-7 h-7" />
         <div className={`w-2.5 h-2.5 rounded-full ${connected ? 'bg-emerald-500' : 'bg-red-500'}`} />
         <span className="text-zinc-900 font-medium text-lg">Cozinha · KDS</span>
         <span className="text-xs text-zinc-500">
