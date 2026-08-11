@@ -4,6 +4,7 @@ import { useKitchenOrders } from './hooks/useKitchenOrders'
 import { OrderCard } from './components/kds/OrderCard'
 import { KdsHeader } from './components/kds/KdsHeader'
 import { kitchenSignalRService } from './services/kitchenSignalRService'
+import { setTenantId as setKitchenServiceTenantId } from './services/kitchenService'
 
 const NAMESPACE = 'https://solution-kitchen.com'
 const DEV_FALLBACK_TENANT_ID = '00000000-0000-0000-0000-000000000001'
@@ -26,6 +27,7 @@ function App() {
     if (!tenantId) return
 
     kitchenSignalRService.setTenantId(tenantId)
+    setKitchenServiceTenantId(tenantId)
     kitchenSignalRService.connect().catch(console.error)
   }, [isAuthenticated, tenantId])
 

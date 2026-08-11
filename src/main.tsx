@@ -8,8 +8,8 @@ kitchenSignalRService.connect().catch(console.error)
 
 createRoot(document.getElementById('root')!).render(
   <Auth0Provider
-    domain="dev-jaof81cwcanjmzqc.us.auth0.com"
-    clientId="1iXRTMhLtSZl3rwMfFVDVgG3zrhaE0H0"
+    domain={import.meta.env.VITE_AUTH0_DOMAIN}
+    clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
     authorizationParams={{ redirect_uri: window.location.origin }}
   >
     <App />
