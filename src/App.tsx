@@ -4,13 +4,13 @@ import { useKitchenOrders } from './hooks/useKitchenOrders'
 import { OrderCard } from './components/kds/OrderCard'
 import { KdsHeader } from './components/kds/KdsHeader'
 import { kitchenSignalRService } from './services/kitchenSignalRService'
-import { setTenantId as setKitchenServiceTenantId } from './services/kitchenService'
+import { setTenantId as setKitchenServiceTenantId, setAuthTokenGetter } from './services/kitchenService'
 
 const NAMESPACE = 'https://solution-kitchen.com'
 const DEV_FALLBACK_TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
 function App() {
-  const { isLoading, isAuthenticated, loginWithRedirect, logout, user } = useAuth0()
+  const { isLoading, isAuthenticated, loginWithRedirect, logout, user, getAccessTokenSilently } = useAuth0()
   const { orders, connected, error, updateStatus } = useKitchenOrders()
 
   const pending = orders.filter(o => o.Status === 'Pending').length
@@ -28,8 +28,9 @@ function App() {
 
     kitchenSignalRService.setTenantId(tenantId)
     setKitchenServiceTenantId(tenantId)
+    setAuthTokenGetter(() => getAccessTokenSilently())
     kitchenSignalRService.connect().catch(console.error)
-  }, [isAuthenticated, tenantId])
+  }, [isAuthenticated, tenantId, getAccessTokenSilently])
 
   if (isLoading) {
     return (

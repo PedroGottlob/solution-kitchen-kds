@@ -17,6 +17,28 @@ export function setTenantId(tenantId: string) {
   api.defaults.headers['X-Tenant-Id'] = tenantId
 }
 
+// O bff-cozinha agora exige um token de verdade (ver revisão de segurança)
+// -- o app fazia login mas nunca mandava o token pra BFF. Preenchido pelo
+// App.tsx assim que o Auth0 termina de autenticar.
+let getAccessToken: (() => Promise<string>) | null = null
+
+export function setAuthTokenGetter(getter: () => Promise<string>) {
+  getAccessToken = getter
+}
+
+api.interceptors.request.use(async (config) => {
+  if (getAccessToken) {
+    try {
+      const token = await getAccessToken()
+      config.headers.set('Authorization', `Bearer ${token}`)
+    } catch {
+      // Sem token disponível — segue sem Authorization, o backend rejeita
+      // com 401 se a rota exigir login.
+    }
+  }
+  return config
+})
+
 export const kitchenService = {
   async getOrders(): Promise<KitchenOrder[]> {
     const { data } = await api.get<KitchenOrder[]>('/api/kitchen/orders')
