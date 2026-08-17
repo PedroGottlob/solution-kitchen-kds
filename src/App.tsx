@@ -27,6 +27,7 @@ function App() {
     if (!tenantId) return
 
     kitchenSignalRService.setTenantId(tenantId)
+    kitchenSignalRService.setAuthTokenGetter(() => getAccessTokenSilently())
     setKitchenServiceTenantId(tenantId)
     setAuthTokenGetter(() => getAccessTokenSilently())
     kitchenSignalRService.connect().catch(console.error)
