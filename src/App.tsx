@@ -5,11 +5,12 @@ import { OrderCard } from './components/kds/OrderCard'
 import { KdsHeader } from './components/kds/KdsHeader'
 import { kitchenSignalRService } from './services/kitchenSignalRService'
 import { setTenantId as setKitchenServiceTenantId, setAuthTokenGetter } from './services/kitchenService'
+import type { TenantBranding } from './services/brandingService'
 
 const NAMESPACE = 'https://solution-kitchen.com'
 const DEV_FALLBACK_TENANT_ID = '00000000-0000-0000-0000-000000000001'
 
-function App() {
+function App({ branding }: { branding: TenantBranding }) {
   const { isLoading, isAuthenticated, loginWithRedirect, logout, user, getAccessTokenSilently } = useAuth0()
   const { orders, connected, error, updateStatus } = useKitchenOrders()
 
@@ -45,7 +46,7 @@ function App() {
     return (
       <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center gap-6 px-8">
         <div className="text-center flex flex-col items-center">
-          <img src="/logo-lockup.svg" alt="Solution Kitchen" className="h-20 mb-4" />
+          <img src={branding.logoUrl} alt={branding.name} className="h-20 mb-4" />
           <p className="text-zinc-500 text-sm">KDS · Cozinha</p>
         </div>
         <button
