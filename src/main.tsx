@@ -1,20 +1,51 @@
+import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Auth0Provider } from '@auth0/auth0-react'
 import './index.css'
 import App from './App.tsx'
 import { kitchenSignalRService } from './services/kitchenSignalRService'
-import { applyBranding, loadBranding } from './services/brandingService'
+import {
+  applyBranding,
+  cacheBranding,
+  defaultBranding,
+  getCachedBranding,
+  loadBranding,
+  type TenantBranding,
+} from './services/brandingService'
 
-async function bootstrap() {
-  const branding = await loadBranding(window.location.host)
-  applyBranding(branding)
+const host = window.location.host
 
-  kitchenSignalRService.connect().catch(console.error)
+// Branding inicial: último conhecido deste host ou o padrão. O app renderiza
+// imediatamente com ele; a resposta real do backend só atualiza a marca
+// depois, sem bloquear a primeira pintura.
+const initialBranding: TenantBranding = getCachedBranding(host) ?? defaultBranding
 
-  createRoot(document.getElementById('root')!).render(
+applyBranding(initialBranding)
+kitchenSignalRService.connect().catch(console.error)
+
+function Root() {
+  const [branding, setBranding] = useState<TenantBranding>(initialBranding)
+
+  useEffect(() => {
+    let cancelled = false
+    loadBranding(host).then((fresh) => {
+      // loadBranding devolve defaultBranding em caso de erro/timeout: nesse
+      // caso mantém o que já está na tela (e no cache) em vez de sobrescrever.
+      if (cancelled || fresh === defaultBranding) return
+      cacheBranding(host, fresh)
+      applyBranding(fresh)
+      setBranding(fresh)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return (
     <Auth0Provider
       domain={import.meta.env.VITE_AUTH0_DOMAIN}
       clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+      cacheLocation="localstorage"
       authorizationParams={{
         redirect_uri: window.location.origin,
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
@@ -25,4 +56,4 @@ async function bootstrap() {
   )
 }
 
-void bootstrap()
+createRoot(document.getElementById('root')!).render(<Root />)
